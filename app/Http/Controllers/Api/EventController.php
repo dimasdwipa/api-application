@@ -15,6 +15,11 @@ class EventController extends Controller
 
     private array $relations = ['user','attendees','attendees.user'];
 
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index','show']);
+    }
+
     public function index()
     {
         $query = $this->loadRelationshps(Event::query());
@@ -37,7 +42,7 @@ class EventController extends Controller
             'description' => $validated['description'] ?? null,
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
-            'user_id' => 1,
+            'user_id' => $request->user()->id,
         ]);
 
         return new EventResource($this->loadRelationshps($event));
